@@ -27,7 +27,7 @@ yarn add won-storage
 
 ## 최소 요구 사항
 - React >= 18.0.0
-- Node.js >= 18.0.0
+- Node.js >= 20.19.0
 
 ## 사용 예시
 ```typescript
