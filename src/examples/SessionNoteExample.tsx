@@ -16,8 +16,8 @@ export default function SessionNoteExample() {
         style={{ width: '100%', padding: '0.5rem', resize: 'vertical' }}
       />
       <div style={{ marginTop: '0.5rem', display: 'flex', gap: '0.5rem' }}>
-        <button onClick={() => setNote('')}>초기화</button>
-        <button onClick={clearNote}>sessionStorage 삭제</button>
+        <button onClick={() => setNote('')}>내용 지우기</button>
+        <button onClick={clearNote}>스토리지에서 삭제</button>
       </div>
       <small style={{ display: 'block', marginTop: '0.5rem', color: '#666' }}>
         메모는 현재 탭이 닫힐 때까지만 유지됩니다.
