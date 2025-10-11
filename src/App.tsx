@@ -1,35 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import { useStorage, useStorageValue, useSetStorage, useRemoveStorage } from './index';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [count, setCount] = useStorage('demo-count', 0);
+  const theme = useStorageValue('demo-theme', '');
+  const setTheme = useSetStorage('demo-theme', 'light');
+  const clearCount = useRemoveStorage('demo-count');
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <main style={{ padding: '2rem', maxWidth: 480, margin: '0 auto', lineHeight: 1.5 }}>
+      <h1>won-storage 데모</h1>
 
-export default App
+      <section style={{ marginTop: '2rem' }}>
+        <h2>useStorage</h2>
+        <p>동일한 키를 사용하는 모든 컴포넌트가 자동으로 동기화됩니다.</p>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <span>카운트: {count}</span>
+          <button onClick={() => setCount(prev => prev + 1)}>+1</button>
+          <button onClick={() => setCount(prev => prev - 1)}>-1</button>
+          <button onClick={() => setCount(0)}>reset</button>
+        </div>
+      </section>
+
+      <section style={{ marginTop: '2rem' }}>
+        <h2>useStorageValue / useSetStorage</h2>
+        <p>값을 읽거나, 구독 없이 setter만 사용할 수도 있습니다.</p>
+        <p>
+          현재 테마: <strong>{theme}</strong>
+        </p>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button onClick={() => setTheme('light')}>Light</button>
+          <button onClick={() => setTheme('dark')}>Dark</button>
+        </div>
+      </section>
+
+      <section style={{ marginTop: '2rem' }}>
+        <h2>useRemoveStorage</h2>
+        <p>스토리지 값을 손쉽게 제거하세요.</p>
+        <button onClick={clearCount}>카운트 삭제</button>
+      </section>
+    </main>
+  );
+}
