@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/husky.sh"
+
+COMMIT_MSG="$(cat "$1")"
+
+CONVENTIONAL_REGEX='^(feat|fix|chore|docs|style|refactor|test|build|ci|perf|revert|release)(\([a-z0-9-]+\))?: .{1,}$'
+
+if ! printf '%s' "$COMMIT_MSG" | grep -Eq "$CONVENTIONAL_REGEX"; then
+  cat <<'EOF'
+✖ 커밋 메시지는 Conventional Commits 규칙을 따라야 합니다.
+예시: feat: add storage hook
+EOF
+  exit 1
+fi
