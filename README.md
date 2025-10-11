@@ -3,18 +3,14 @@
 > React 18/19의 `useSyncExternalStore`를 활용한 타입 안전 스토리지 관리 훅 라이브러리
 
 [![npm version](https://img.shields.io/npm/v/won-storage.svg)](https://www.npmjs.com/package/won-storage)
-[![npm downloads](https://img.shields.io/npm/dm/won-storage.svg)](https://www.npmjs.com/package/won-storage)
-[![license](https://img.shields.io/npm/l/won-storage.svg)](https://github.com/wondonghwi/won-storage/blob/main/LICENSE)
 
 ## 주요 특징
 
-- ⚛️ **React 18/19 완벽 지원**: `useSyncExternalStore`를 사용하여 동시 렌더링(Concurrent Rendering)과 SSR을 완벽히 지원
+- ⚛️ **React 18/19 완벽 지원**: `useSyncExternalStore`를 사용하여 동시 렌더링(Concurrent Rendering)과 SSR을 지원
 - 🔄 **자동 동기화**: localStorage/sessionStorage 값이 변경되면 자동으로 리렌더링
 - 🪟 **크로스탭 동기화**: 다른 탭/윈도우의 변경사항을 자동으로 반영
 - 🎯 **선택적 구독**: 값만 읽기, setter만 사용, remove만 사용 등 필요에 따라 선택
 - 🔒 **TypeScript 완벽 지원**: 엄격한 타입 안전성으로 런타임 에러 방지
-- ⚡ **고성능**: 키별 독립 구독 시스템으로 불필요한 리렌더링 방지
-- 🪶 **경량**: 의존성 없는 순수 React 훅 (gzip: ~1KB)
 - 📦 **ESM/CJS 지원**: 모든 빌드 도구와 호환
 
 ## 설치
@@ -32,8 +28,8 @@ yarn add won-storage
 
 ## 최소 요구 사항
 
-- React >= 18.0.0
-- Node.js >= 20.19.0
+- **React >= 18.0.0**
+- **Node.js >= 20.19.0**
 
 ## 빠른 시작
 
@@ -58,7 +54,7 @@ export function Counter() {
 ### sessionStorage 사용
 
 ```tsx
-const [token, setToken] = useStorage('auth-token', null, {
+const [token, setToken] = useStorage('token', null, {
   storageType: 'session',
 });
 ```
@@ -68,7 +64,7 @@ const [token, setToken] = useStorage('auth-token', null, {
 ```tsx
 import { useStorageValue, useSetStorage, useRemoveStorage } from 'won-storage';
 
-const theme = useStorageValue('theme', 'light'); // 변경 시 자동 리렌더링
+const theme = useStorageValue('theme', ''); // 변경 시 자동 리렌더링
 const setTheme = useSetStorage('theme', 'light'); // 구독 없이 setter만
 const clearTheme = useRemoveStorage('theme'); // 값 제거
 ```
@@ -109,7 +105,8 @@ setUser(null);
 
 ### `useStorageValue<T>(key, defaultValue, options?)`
 
-값만 읽기 전용으로 사용하는 훅입니다. 스토리지 값이 변경되면 자동으로 리렌더링됩니다.
+값만 읽기 전용으로 사용하는 훅입니다. 스토리지 값이 변경되면 자동으로 리렌더링됩니다.  
+`defaultValue`를 필수로 받는 이유는 React가 초기 렌더에서 사용할 안전한 기본값을 보장하고, TypeScript가 반환 타입을 `T`로 확정해 추가적인 null/undefined 처리를 강제하지 않도록 하기 위함입니다.
 
 **Returns:** `T`
 
@@ -149,56 +146,13 @@ const removeCache = useRemoveStorage('cache-data');
 removeCache(); // 스토리지에서 삭제
 ```
 
-## 고급 기능
-
-### 커스텀 직렬화/역직렬화
-
-```tsx
-const [date, setDate] = useStorage('last-visit', new Date(), {
-  serializer: value => value.toISOString(),
-  deserializer: value => new Date(value),
-});
-```
-
-### 크로스탭 동기화
-
-```tsx
-// 탭 A
-const [count, setCount] = useStorage('count', 0);
-setCount(10);
-
-// 탭 B (자동으로 업데이트됨!)
-const [count, setCount] = useStorage('count', 0);
-console.log(count); // 10
-```
-
-다른 탭/윈도우에서 스토리지를 변경하면 모든 탭이 자동으로 업데이트됩니다!
-
 ## React 18/19 동시 렌더링 지원
 
 `won-storage`는 React 18/19의 `useSyncExternalStore`를 사용하여 다음을 보장합니다:
 
 1. **Tearing 방지**: 동시 렌더링 중에도 모든 컴포넌트가 일관된 값을 보도록 보장
 2. **SSR 안전**: `getServerSnapshot`을 통해 hydration mismatch 방지
-3. **자동 배칭**: React 18의 자동 배칭과 완벽히 호환
-
-자세한 내용은 [ARCHITECTURE.md](./ARCHITECTURE.md)를 참조하세요.
-
-## 성능 최적화
-
-### 키별 독립 구독
-
-각 키마다 독립적인 리스너를 관리하여, 한 키의 변경이 다른 키를 구독하는 컴포넌트에 영향을 주지 않습니다.
-
-```tsx
-// ComponentA: 'count' 구독
-const [count] = useStorage('count', 0);
-
-// ComponentB: 'user' 구독
-const [user] = useStorage('user', { name: 'Alice' });
-
-// 'count' 변경 시 ComponentA만 리렌더링, ComponentB는 리렌더링 안 됨!
-```
+3. **자동 배칭**: React 18의 자동 배칭과 호환
 
 ### 선택적 구독으로 불필요한 리렌더링 방지
 
