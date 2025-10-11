@@ -1,0 +1,85 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare release version
+        id: version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          PUBLISHED_VERSION=$(npm view won-storage version 2>/dev/null || echo "0.0.0")
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "published=$PUBLISHED_VERSION" >> $GITHUB_OUTPUT
+          if [ "$CURRENT_VERSION" = "$PUBLISHED_VERSION" ]; then
+            NEW_VERSION=$(pnpm version patch --no-git-tag-version)
+            NEW_VERSION=${NEW_VERSION#v}
+            echo "release=$NEW_VERSION" >> $GITHUB_OUTPUT
+            echo "auto_bumped=true" >> $GITHUB_OUTPUT
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "Bumped patch version to $NEW_VERSION"
+          else
+            HIGHEST=$(printf '%s\n%s\n' "$CURRENT_VERSION" "$PUBLISHED_VERSION" | sort -V | tail -n1)
+            if [ "$HIGHEST" != "$CURRENT_VERSION" ]; then
+              echo "release=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+              echo "auto_bumped=false" >> $GITHUB_OUTPUT
+              echo "should_publish=false" >> $GITHUB_OUTPUT
+              echo "Current version ($CURRENT_VERSION) is behind published version ($PUBLISHED_VERSION)." >&2
+              exit 1
+            else
+              echo "release=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+              echo "auto_bumped=false" >> $GITHUB_OUTPUT
+              echo "should_publish=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Build
+        if: steps.version.outputs.should_publish == 'true'
+        run: pnpm build
+
+      - name: Publish to npm
+        if: steps.version.outputs.should_publish == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version bump
+        if: steps.version.outputs.auto_bumped == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.version.outputs.release }} [skip ci]"
+          git push origin HEAD:${{ github.ref }}
+
+      - name: Create Git tag
+        if: steps.version.outputs.should_publish == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag v${{ steps.version.outputs.release }}
+          git push origin v${{ steps.version.outputs.release }}
