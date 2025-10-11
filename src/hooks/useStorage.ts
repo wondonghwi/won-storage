@@ -1,12 +1,10 @@
 import { useSyncExternalStore, useCallback } from 'react';
-import type { UseStorageOptions, SetStateAction } from '../types';
+import type { SetStateAction } from 'react';
+import type { UseStorageOptions } from '../types';
 import { defaultSerializer, defaultDeserializer } from '../utils/serializer';
-import {
-  subscribe,
-  getSnapshot,
-  setStorageItem,
-  removeStorageItem,
-} from '../utils/storageSubscriber';
+import { subscribe, getSnapshot, setStorageItem } from '../utils/storageSubscriber';
+import { noop } from '../utils/noop';
+import { getStorage } from '../utils/getStorage';
 
 /**
  * useStorage
@@ -17,17 +15,17 @@ import {
  * - 스토리지 값이 변경되면 자동 리렌더링
  * - 다른 탭/윈도우 변경사항 자동 동기화
  * - SSR 안전 (hydration mismatch 방지)
+ * - 함수형 업데이트 지원 (setState처럼 사용)
  *
  * @param key - 스토리지 키
  * @param defaultValue - 기본값 (스토리지에 값이 없을 때 사용)
  * @param options - 옵션 (storageType, serializer 등)
- *
  */
-export function useStorage<T>(
+export const useStorage = <T>(
   key: string,
   defaultValue: T,
   options: UseStorageOptions<T> = {}
-): [T, (value: SetStateAction<T>) => void] {
+): [T, (value: SetStateAction<T>) => void] => {
   const {
     storageType = 'local',
     serializer = defaultSerializer,
@@ -35,24 +33,18 @@ export function useStorage<T>(
   } = options;
 
   // 브라우저 환경에서만 storage 사용
-  const storage =
-    typeof window !== 'undefined'
-      ? storageType === 'session'
-        ? window.sessionStorage
-        : window.localStorage
-      : null;
+  const storage = getStorage(storageType);
 
   /**
    * useSyncExternalStore 사용
    *
    * 외부 스토어(여기서는 Web Storage)를 구독합니다.
-   *
    */
   const rawValue = useSyncExternalStore(
     // === 1. subscribe 함수 ===
     useCallback(
       onStoreChange => {
-        if (!storage) return () => {};
+        if (!storage) return noop;
         return subscribe(storage, key, onStoreChange);
       },
       [storage, key]
@@ -90,13 +82,8 @@ export function useStorage<T>(
             ? (valueOrUpdater as (prev: T) => T)(value)
             : valueOrUpdater;
 
-        // null이나 undefined면 스토리지에서 삭제
-        if (newValue === null || newValue === undefined) {
-          removeStorageItem(storage, key);
-        } else {
-          const serialized = serializer(newValue);
-          setStorageItem(storage, key, serialized);
-        }
+        const serialized = serializer(newValue);
+        setStorageItem(storage, key, serialized);
       } catch (error) {
         console.error(`[won-storage] Failed to set value for key "${key}":`, error);
       }
@@ -105,4 +92,4 @@ export function useStorage<T>(
   );
 
   return [value, setValue];
-}
+};
