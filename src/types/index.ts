@@ -37,8 +37,3 @@ export type StorageListener = () => void;
  * 구독 해제 함수
  */
 export type Unsubscribe = () => void;
-
-/**
- * setState와 동일한 함수형 업데이트 지원 타입
- */
-export type SetStateAction<T> = T | ((prevState: T) => T);

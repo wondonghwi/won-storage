@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useStorage } from '../src/hooks/useStorage';
 import { useStorageValue } from '../src/hooks/useStorageValue';
+import { useRemoveStorage } from '../src/hooks/useRemoveStorage';
 
 describe('useStorage', () => {
   const key = 'won-storage:test';
@@ -85,5 +86,37 @@ describe('useStorageValue', () => {
     });
 
     expect(result.current).toBe('dark');
+  });
+});
+
+describe('useRemoveStorage', () => {
+  const key = 'won-storage:remove';
+
+  beforeEach(() => {
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+  });
+
+  it('localStorage에서 키를 삭제한다', () => {
+    window.localStorage.setItem(key, JSON.stringify('test-value'));
+    expect(window.localStorage.getItem(key)).toBe(JSON.stringify('test-value'));
+
+    const { result } = renderHook(() => useRemoveStorage(key));
+
+    act(() => {
+      result.current();
+    });
+
+    expect(window.localStorage.getItem(key)).toBeNull();
+  });
+
+  it('존재하지 않는 키를 삭제해도 에러가 발생하지 않는다', () => {
+    const { result } = renderHook(() => useRemoveStorage('non-existent-key'));
+
+    expect(() => {
+      act(() => {
+        result.current();
+      });
+    }).not.toThrow();
   });
 });
