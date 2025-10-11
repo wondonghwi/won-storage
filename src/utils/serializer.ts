@@ -5,8 +5,6 @@
  * - 순환 참조: Error 발생
  * - BigInt: Error 발생
  * - undefined, Symbol, Function: JSON.stringify가 자동으로 제외 (JSON 스펙)
- *
- * @throws {Error} JSON.stringify 실패 시
  */
 export const defaultSerializer = <T>(value: T): string => {
   try {
@@ -36,8 +34,6 @@ export const defaultSerializer = <T>(value: T): string => {
  * 에러 처리:
  * - 잘못된 JSON: Error 발생
  * - 빈 문자열, undefined, NaN 등: Error 발생
- *
- * @throws {Error} JSON.parse 실패 시
  */
 export const defaultDeserializer = <T>(value: string): T => {
   try {

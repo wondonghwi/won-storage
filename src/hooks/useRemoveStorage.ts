@@ -1,23 +1,25 @@
 import { useCallback } from 'react';
 import type { StorageType } from '../types';
-import { useStorage } from './useStorage';
+import { removeStorageItem } from '../utils/storageSubscriber';
+import { getStorage } from '../utils/getStorage';
 
 /**
  * useRemoveStorage
  *
  * 스토리지에서 값을 삭제하는 함수만 반환하는 훅입니다.
- * setValue(null)을 호출하여 삭제를 수행합니다.
  *
  * @param key - 스토리지 키
  * @param storageType - 스토리지 타입 (기본값: 'local')
+ * @returns 스토리지에서 키를 삭제하는 함수
  *
  */
-export function useRemoveStorage(key: string, storageType: StorageType = 'local'): () => void {
-  const [, setValue] = useStorage<null>(key, null, { storageType });
+export const useRemoveStorage = (key: string, storageType: StorageType = 'local'): (() => void) => {
+  const storage = getStorage(storageType);
 
   const remove = useCallback(() => {
-    setValue(null);
-  }, [setValue]);
+    if (!storage) return;
+    removeStorageItem(storage, key);
+  }, [storage, key]);
 
   return remove;
-}
+};

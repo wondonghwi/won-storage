@@ -72,6 +72,7 @@ const clearTheme = useRemoveStorage('theme'); // 값 제거
 ### `useStorage<T>(key, defaultValue, options?)`
 
 localStorage/sessionStorage를 useState처럼 사용하는 메인 훅입니다.
+값을 삭제하려면 `useRemoveStorage`를 사용하세요. `setValue(null)`처럼 `null`이나 `undefined`를 넘기면 해당 값이 그대로 저장됩니다.
 
 **Parameters:**
 
@@ -116,6 +117,7 @@ const theme = useStorageValue('theme', 'light');
 ### `useSetStorage<T>(key, defaultValue, options?)`
 
 setter 함수만 반환하는 훅입니다. 값을 구독하지 않으므로 리렌더링이 발생하지 않습니다.
+값 제거는 `useRemoveStorage`로 처리하세요.
 
 **Returns:** `(value: T | ((prev: T) => T)) => void`
 
