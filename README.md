@@ -1,4 +1,6 @@
-### React `useSyncExternalStore`를 활용한 실시간 리렌더링되는 스토리지 관리 훅 라이브러리
+# won-storage
+
+React hooks library for storage management using useSyncExternalStore.
 
 [![npm version](https://img.shields.io/npm/v/won-storage.svg)](https://www.npmjs.com/package/won-storage)
 
