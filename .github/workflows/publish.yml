@@ -1,9 +1,7 @@
 name: Publish to npm
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -39,26 +37,18 @@ jobs:
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "published=$PUBLISHED_VERSION" >> $GITHUB_OUTPUT
           if [ "$CURRENT_VERSION" = "$PUBLISHED_VERSION" ]; then
-            NEW_VERSION=$(pnpm version patch --no-git-tag-version)
-            NEW_VERSION=${NEW_VERSION#v}
-            echo "release=$NEW_VERSION" >> $GITHUB_OUTPUT
-            echo "auto_bumped=true" >> $GITHUB_OUTPUT
-            echo "should_publish=true" >> $GITHUB_OUTPUT
-            echo "Bumped patch version to $NEW_VERSION"
-          else
-            HIGHEST=$(printf '%s\n%s\n' "$CURRENT_VERSION" "$PUBLISHED_VERSION" | sort -V | tail -n1)
-            if [ "$HIGHEST" != "$CURRENT_VERSION" ]; then
-              echo "release=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-              echo "auto_bumped=false" >> $GITHUB_OUTPUT
-              echo "should_publish=false" >> $GITHUB_OUTPUT
-              echo "Current version ($CURRENT_VERSION) is behind published version ($PUBLISHED_VERSION)." >&2
-              exit 1
-            else
-              echo "release=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-              echo "auto_bumped=false" >> $GITHUB_OUTPUT
-              echo "should_publish=true" >> $GITHUB_OUTPUT
-            fi
+            echo "Current version ($CURRENT_VERSION) already exists on npm. Please bump package.json before running this workflow." >&2
+            exit 1
           fi
+          HIGHEST=$(printf '%s\n%s\n' "$CURRENT_VERSION" "$PUBLISHED_VERSION" | sort -V | tail -n1)
+          if [ "$HIGHEST" != "$CURRENT_VERSION" ]; then
+            echo "release=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "Current version ($CURRENT_VERSION) is behind published version ($PUBLISHED_VERSION)." >&2
+            exit 1
+          fi
+          echo "release=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "should_publish=true" >> $GITHUB_OUTPUT
 
       - name: Build
         if: steps.version.outputs.should_publish == 'true'
@@ -69,15 +59,6 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Commit version bump
-        if: steps.version.outputs.auto_bumped == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json
-          git commit -m "chore: bump version to ${{ steps.version.outputs.release }} [skip ci]"
-          git push origin HEAD:${{ github.ref }}
 
       - name: Create Git tag
         if: steps.version.outputs.should_publish == 'true'
