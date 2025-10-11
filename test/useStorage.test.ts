@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useStorage } from '../src/hooks/useStorage';
+import { useStorageValue } from '../src/hooks/useStorageValue';
 
 describe('useStorage', () => {
   const key = 'won-storage:test';
@@ -13,7 +14,6 @@ describe('useStorage', () => {
 
   it('스토리지에 값이 없으면 기본값을 반환한다', () => {
     const { result } = renderHook(() => useStorage(key, defaultValue));
-
     expect(result.current[0]).toEqual(defaultValue);
   });
 
@@ -47,7 +47,6 @@ describe('useStorage', () => {
 
   it('같은 키에 새 값을 저장하면 기존 값을 덮어쓴다', () => {
     window.localStorage.setItem(key, JSON.stringify({ name: 'First' }));
-
     const { result } = renderHook(() => useStorage(key, defaultValue));
 
     act(() => {
@@ -56,5 +55,35 @@ describe('useStorage', () => {
 
     expect(result.current[0]).toEqual({ name: 'Temp' });
     expect(window.localStorage.getItem(key)).toBe(JSON.stringify({ name: 'Temp' }));
+  });
+});
+
+describe('useStorageValue', () => {
+  const key = 'won-storage:value';
+
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it('기본값을 제공하면 해당 값을 초깃값으로 사용한다', () => {
+    const { result } = renderHook(() => useStorageValue(key, 'light'));
+    expect(result.current).toBe('light');
+  });
+
+  it('스토리지 업데이트를 반영한다', () => {
+    const { result } = renderHook(() => useStorageValue(key, 'light'));
+
+    act(() => {
+      window.localStorage.setItem(key, JSON.stringify('dark'));
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key,
+          newValue: JSON.stringify('dark'),
+          storageArea: window.localStorage,
+        })
+      );
+    });
+
+    expect(result.current).toBe('dark');
   });
 });
