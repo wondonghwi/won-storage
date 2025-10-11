@@ -25,7 +25,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "prepublishOnly": "pnpm run build"
