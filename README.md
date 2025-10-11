@@ -1,12 +1,10 @@
-# won-storage
-
-> React 18/19의 `useSyncExternalStore`를 활용한 타입 안전 스토리지 관리 훅 라이브러리
+### React `useSyncExternalStore`를 활용한 실시간 리렌더링되는 스토리지 관리 훅 라이브러리
 
 [![npm version](https://img.shields.io/npm/v/won-storage.svg)](https://www.npmjs.com/package/won-storage)
 
 ## 주요 특징
 
-- ⚛️ **React 18/19 완벽 지원**: `useSyncExternalStore`를 사용하여 동시 렌더링(Concurrent Rendering)과 SSR을 지원
+- ⚛️ **React 18/19 지원**: `useSyncExternalStore`를 사용하여 동시 렌더링(Concurrent Rendering)과 SSR을 지원
 - 🔄 **자동 동기화**: localStorage/sessionStorage 값이 변경되면 자동으로 리렌더링
 - 🪟 **크로스탭 동기화**: 다른 탭/윈도우의 변경사항을 자동으로 반영
 - 🎯 **선택적 구독**: 값만 읽기, setter만 사용, remove만 사용 등 필요에 따라 선택
@@ -96,9 +94,6 @@ setUser({ name: 'Bob', age: 30 });
 
 // 함수형 업데이트
 setUser(prev => ({ ...prev, age: prev.age + 1 }));
-
-// 삭제 (null 또는 undefined 설정)
-setUser(null);
 ```
 
 ---
