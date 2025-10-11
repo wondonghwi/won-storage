@@ -4,11 +4,7 @@ export { useStorageValue } from './hooks/useStorageValue';
 export { useSetStorage } from './hooks/useSetStorage';
 export { useRemoveStorage } from './hooks/useRemoveStorage';
 
+export { noop } from './utils/noop';
+
 // types
-export type {
-  StorageType,
-  UseStorageOptions,
-  SetStateAction,
-  StorageListener,
-  Unsubscribe,
-} from './types';
+export type { StorageType, UseStorageOptions, StorageListener, Unsubscribe } from './types';

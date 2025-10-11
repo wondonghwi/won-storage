@@ -1,4 +1,5 @@
-import type { UseStorageOptions, SetStateAction } from '../types';
+import type { SetStateAction } from 'react';
+import type { UseStorageOptions } from '../types';
 import { useStorage } from './useStorage';
 
 /**
@@ -11,11 +12,11 @@ import { useStorage } from './useStorage';
  * @param options - 옵션
  *
  */
-export function useSetStorage<T>(
+export const useSetStorage = <T>(
   key: string,
   defaultValue: T,
   options: UseStorageOptions<T> = {}
-): (value: SetStateAction<T>) => void {
+): ((value: SetStateAction<T>) => void) => {
   const [, setValue] = useStorage(key, defaultValue, options);
   return setValue;
-}
+};
