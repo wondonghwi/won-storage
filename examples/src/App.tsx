@@ -1,6 +1,6 @@
-import LocalCountExample from './examples/LocalCountExample';
-import ThemeExample from './examples/ThemeExample';
-import SessionNoteExample from './examples/SessionNoteExample';
+import LocalCountExample from './demos/LocalCountExample';
+import ThemeExample from './demos/ThemeExample';
+import SessionNoteExample from './demos/SessionNoteExample';
 
 export default function App() {
   return (
