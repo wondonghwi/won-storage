@@ -1,10 +1,15 @@
 import { useSyncExternalStore, useCallback } from 'react';
 import type { SetStateAction } from 'react';
-import type { UseStorageOptions } from '../types';
-import { defaultSerializer, defaultDeserializer } from '../utils/serializer';
-import { subscribe, getSnapshot, setStorageItem } from '../utils/storageSubscriber';
-import { noop } from '../utils/noop';
-import { getStorage } from '../utils/getStorage';
+import type { StorageOptions } from '@won-storage/core';
+import {
+  defaultSerializer,
+  defaultDeserializer,
+  subscribe,
+  getSnapshot,
+  setStorageItem,
+  noop,
+  getStorage,
+} from '@won-storage/core';
 
 /**
  * useStorage
@@ -24,7 +29,7 @@ import { getStorage } from '../utils/getStorage';
 export const useStorage = <T>(
   key: string,
   defaultValue: T,
-  options: UseStorageOptions<T> = {}
+  options: StorageOptions<T> = {}
 ): [T, (value: SetStateAction<T>) => void] => {
   const {
     storageType = 'local',

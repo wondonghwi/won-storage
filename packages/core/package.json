@@ -1,0 +1,61 @@
+{
+  "name": "@won-storage/core",
+  "version": "0.3.0",
+  "description": "Framework-agnostic storage management core library",
+  "author": "wondonghwi",
+  "license": "MIT",
+  "keywords": [
+    "storage",
+    "localStorage",
+    "sessionStorage",
+    "vanilla",
+    "core"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wondonghwi/won-storage.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/wondonghwi/won-storage/issues"
+  },
+  "homepage": "https://github.com/wondonghwi/won-storage#readme",
+  "type": "module",
+  "private": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "vite build",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "typescript": "~5.9.3",
+    "vite": "npm:rolldown-vite@7.1.14",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

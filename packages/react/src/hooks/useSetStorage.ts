@@ -1,5 +1,5 @@
 import type { SetStateAction } from 'react';
-import type { UseStorageOptions } from '../types';
+import type { StorageOptions } from '@won-storage/core';
 import { useStorage } from './useStorage';
 
 /**
@@ -15,7 +15,7 @@ import { useStorage } from './useStorage';
 export const useSetStorage = <T>(
   key: string,
   defaultValue: T,
-  options: UseStorageOptions<T> = {}
+  options: StorageOptions<T> = {}
 ): ((value: SetStateAction<T>) => void) => {
   const [, setValue] = useStorage(key, defaultValue, options);
   return setValue;

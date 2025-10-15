@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
-import type { StorageType } from '../types';
-import { removeStorageItem } from '../utils/storageSubscriber';
-import { getStorage } from '../utils/getStorage';
+import type { StorageType } from '@won-storage/core';
+import { removeStorageItem, getStorage } from '@won-storage/core';
 
 /**
  * useRemoveStorage

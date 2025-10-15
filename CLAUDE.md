@@ -4,31 +4,55 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 프로젝트 개요
 
-`won-storage`는 React 18+의 `useSyncExternalStore` API를 활용한 스토리지 관리 훅 라이브러리입니다. TypeScript로 작성되었으며 ESM과 CommonJS 번들을 모두 제공하여 다양한 빌드 도구와 호환됩니다.
+`won-storage`는 프레임워크 독립적인 스토리지 관리 라이브러리입니다. Monorepo 구조로 Core 패키지는 vanilla JavaScript로 동작하며, React 패키지는 React 18+의 `useSyncExternalStore` API를 활용합니다. TypeScript로 작성되었으며 ESM과 CommonJS 번들을 모두 제공하여 다양한 빌드 도구와 호환됩니다.
 
-## 프로젝트 구조
+## 프로젝트 구조 (Monorepo)
 
 ```
 won-storage/
-├── src/                      # 라이브러리 소스 코드
-│   ├── hooks/               # 훅 구현 (useLocalStorage, useSessionStorage 등)
-│   ├── utils/               # 유틸리티 함수
-│   ├── types/               # TypeScript 타입 정의
-│   └── index.ts             # 라이브러리 엔트리 포인트
-├── examples/                # 예제 앱 (npm 배포 제외)
+├── packages/
+│   ├── core/                    # @won-storage/core (프레임워크 독립적)
+│   │   ├── src/
+│   │   │   ├── store.ts        # 스토리지 구독 시스템
+│   │   │   ├── serializer.ts   # 직렬화/역직렬화
+│   │   │   ├── utils.ts        # 유틸리티 함수
+│   │   │   ├── types.ts        # 타입 정의
+│   │   │   └── index.ts        # Core 엔트리 포인트
+│   │   ├── dist/               # 빌드 출력
+│   │   ├── package.json
+│   │   ├── tsconfig.json
+│   │   └── vite.config.ts
+│   │
+│   └── react/                   # won-storage (React 바인딩)
+│       ├── src/
+│       │   ├── hooks/
+│       │   │   ├── useStorage.ts
+│       │   │   ├── useStorageValue.ts
+│       │   │   ├── useSetStorage.ts
+│       │   │   └── useRemoveStorage.ts
+│       │   └── index.ts        # React 엔트리 포인트
+│       ├── dist/               # 빌드 출력
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── vite.config.ts
+│
+├── examples/                    # 예제 앱 (npm 배포 제외)
 │   ├── src/
-│   │   ├── demos/          # 예제 컴포넌트
+│   │   ├── demos/              # 예제 컴포넌트
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   └── index.html
-├── test/                    # 테스트 파일
-├── dist/                    # 빌드 출력 (npm 배포됨)
-├── package.json            # 라이브러리 메타데이터 (files: ["dist", "README.md"])
-├── vite.config.ts          # 빌드 & 개발 서버 설정 (command에 따라 분기)
-└── tsconfig.json           # TypeScript 설정
+├── test/                        # 테스트 파일
+├── pnpm-workspace.yaml          # pnpm 워크스페이스 설정
+├── package.json                 # Root package.json (monorepo 관리)
+├── tsconfig.json                # Root TypeScript 설정
+└── tsconfig.base.json           # 공유 TypeScript 설정
 ```
 
-**중요**: `examples/` 폴더는 개발 중 예제를 테스트하기 위한 용도이며, `package.json`의 `files` 필드에 의해 npm 배포에서 자동으로 제외됩니다.
+**중요**:
+- `packages/core`는 React 의존성 없이 독립적으로 동작합니다
+- `packages/react`는 `@won-storage/core`를 의존성으로 사용합니다 (workspace:*)
+- `examples/` 폴더는 개발 중 예제를 테스트하기 위한 용도이며, npm 배포에서 제외됩니다
 
 ## 개발 명령어
 
@@ -40,15 +64,21 @@ won-storage/
 
 ```bash
 # 의존성 설치
-pnpm install --frozen-lockfile
+pnpm install
 
 # 개발 서버 실행 (examples/ 폴더의 예제 앱 실행)
 pnpm dev
 
-# 라이브러리 빌드 (dist/ 폴더에 ESM/CJS 번들 생성)
+# 모든 패키지 빌드 (core → react 순서로 빌드)
 pnpm build
 
-# 린트 실행
+# Core 패키지만 빌드
+pnpm build:core
+
+# React 패키지만 빌드
+pnpm build:react
+
+# 모든 패키지 린트 실행
 pnpm lint
 
 # 코드 포맷팅
@@ -57,7 +87,7 @@ pnpm format
 # 포맷팅 검사 (CI에서 사용)
 pnpm format:check
 
-# 테스트 실행
+# 모든 패키지 테스트 실행
 pnpm test
 
 # 테스트 watch 모드
@@ -69,16 +99,31 @@ pnpm test:watch
 ### Vite 라이브러리 빌드
 
 - **빌드 도구**: Rolldown Vite (`npm:rolldown-vite@7.1.14`)
-- **설정 파일**: `vite.config.ts` (command에 따라 빌드/개발 서버 분기)
-  - `vite` → 개발 서버 (examples 폴더를 root로 사용)
-  - `vite build` → 라이브러리 빌드
-- **엔트리 포인트**: `src/index.ts`
-- **출력 파일**:
+- **Monorepo 구조**: pnpm workspace 사용
+  - Core 패키지가 먼저 빌드되어야 React 패키지가 빌드 가능
+  - React 패키지는 Core 패키지를 `workspace:*`로 참조
+
+#### Core 패키지 (`@won-storage/core`)
+- **설정 파일**: `packages/core/vite.config.ts`
+- **엔트리 포인트**: `packages/core/src/index.ts`
+- **출력**:
   - `dist/index.mjs` (ESM)
   - `dist/index.cjs` (CommonJS)
   - `dist/index.d.ts` (TypeScript 타입 정의)
-- **External Dependencies**: `react`, `react-dom`은 번들에서 제외되고 peerDependencies로 처리됩니다
-- **Type Generation**: `vite-plugin-dts`가 `src/hooks/`, `src/utils/`, `src/types/`, `src/index.ts`만 타입 정의 생성 (examples 폴더 제외)
+- **External Dependencies**: 없음 (완전히 독립적)
+- **Type Generation**: `vite-plugin-dts`가 타입 정의 생성
+
+#### React 패키지 (`won-storage`)
+- **설정 파일**: `packages/react/vite.config.ts` (command에 따라 빌드/개발 서버 분기)
+  - `vite` → 개발 서버 (../../examples 폴더를 root로 사용)
+  - `vite build` → 라이브러리 빌드
+- **엔트리 포인트**: `packages/react/src/index.ts`
+- **출력**:
+  - `dist/index.mjs` (ESM)
+  - `dist/index.cjs` (CommonJS)
+  - `dist/index.d.ts` (TypeScript 타입 정의)
+- **External Dependencies**: `react`, `react-dom`, `@won-storage/core`는 번들에서 제외
+- **Type Generation**: `vite-plugin-dts`가 타입 정의 생성
 
 ### TypeScript 설정
 
@@ -149,4 +194,25 @@ pre-commit 훅이 설정되어 있습니다. 커밋 전에 자동으로 코드 �
 
 ## 현재 구현 상태
 
-현재는 테스트용 함수(`testTempAdd`)와 버전 상수(`VERSION`)만 export하고 있습니다. 실제 스토리지 훅(`useLocalStorage`, `useSessionStorage`)은 아직 구현되지 않았으며 `src/index.ts`에 TODO 주석으로 표시되어 있습니다.
+모든 기본 기능이 구현되어 있습니다:
+
+### Core 패키지 (`@won-storage/core`)
+- ✅ `subscribe`: 스토리지 변경 구독
+- ✅ `getSnapshot`: 현재 값 가져오기
+- ✅ `setStorageItem`: 값 설정
+- ✅ `removeStorageItem`: 값 제거
+- ✅ `getStorage`: Storage 객체 가져오기
+- ✅ `defaultSerializer/defaultDeserializer`: 직렬화/역직렬화
+
+### React 패키지 (`won-storage`)
+- ✅ `useStorage`: 메인 훅 (값 읽기 + 쓰기)
+- ✅ `useStorageValue`: 값만 읽기
+- ✅ `useSetStorage`: Setter만 사용
+- ✅ `useRemoveStorage`: 값 제거
+
+## 향후 확장 가능성
+
+Monorepo 구조 덕분에 다음과 같은 확장이 용이합니다:
+- `@won-storage/vue`: Vue 3 Composition API 바인딩
+- `@won-storage/svelte`: Svelte stores 바인딩
+- `@won-storage/solid`: Solid.js signals 바인딩

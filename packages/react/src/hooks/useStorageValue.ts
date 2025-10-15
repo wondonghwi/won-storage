@@ -1,4 +1,4 @@
-import type { UseStorageOptions } from '../types';
+import type { StorageOptions } from '@won-storage/core';
 import { useStorage } from './useStorage';
 
 /**
@@ -11,7 +11,7 @@ import { useStorage } from './useStorage';
 export const useStorageValue = <T>(
   key: string,
   defaultValue: T,
-  options?: UseStorageOptions<T>
+  options?: StorageOptions<T>
 ): T => {
   const [value] = useStorage(key, defaultValue, options);
   return value;

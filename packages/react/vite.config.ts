@@ -8,9 +8,15 @@ export default defineConfig(({ command, mode }) => {
   if (command === 'serve' && mode !== 'test') {
     return {
       plugins: [react()],
-      root: 'examples',
+      root: '../../examples',
       server: {
         port: 5173,
+      },
+      resolve: {
+        alias: [
+          { find: '@won-storage/core', replacement: resolve(__dirname, '../core/src/index.ts') },
+          { find: 'won-storage', replacement: resolve(__dirname, './src/index.ts') },
+        ],
       },
     };
   }
@@ -20,12 +26,25 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       react(),
       dts({
-        include: ['src/hooks/**/*', 'src/utils/**/*', 'src/types/**/*', 'src/index.ts'],
+        include: ['src/**/*'],
         outDir: 'dist',
         rollupTypes: true,
         tsconfigPath: './tsconfig.json',
       }),
     ],
+    // Vitest에서 @won-storage/core를 로컬 소스에 매핑하여 빌드 산출물 없이도 테스트 가능하도록 처리
+    ...(mode === 'test'
+      ? {
+          resolve: {
+            alias: [
+              {
+                find: '@won-storage/core',
+                replacement: resolve(__dirname, '../core/src/index.ts'),
+              },
+            ],
+          },
+        }
+      : {}),
     build: {
       lib: {
         entry: resolve(__dirname, 'src/index.ts'),
@@ -33,11 +52,12 @@ export default defineConfig(({ command, mode }) => {
         fileName: format => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
       },
       rollupOptions: {
-        external: ['react', 'react-dom'],
+        external: ['react', 'react-dom', '@won-storage/core'],
         output: {
           globals: {
             react: 'React',
             'react-dom': 'ReactDOM',
+            '@won-storage/core': 'WonStorageCore',
           },
         },
       },

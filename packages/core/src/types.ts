@@ -6,9 +6,19 @@
 export type StorageType = 'local' | 'session';
 
 /**
- * useStorage 훅 옵션
+ * 스토리지 변경 리스너 함수
  */
-export interface UseStorageOptions<T> {
+export type StorageListener = () => void;
+
+/**
+ * 구독 해제 함수
+ */
+export type Unsubscribe = () => void;
+
+/**
+ * 스토리지 옵션
+ */
+export interface StorageOptions<T> {
   /**
    * 사용할 스토리지 타입
    * @default 'local'
@@ -27,13 +37,3 @@ export interface UseStorageOptions<T> {
    */
   deserializer?: (value: string) => T;
 }
-
-/**
- * 스토리지 변경 리스너 함수
- */
-export type StorageListener = () => void;
-
-/**
- * 구독 해제 함수
- */
-export type Unsubscribe = () => void;
