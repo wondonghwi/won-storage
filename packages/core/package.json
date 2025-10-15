@@ -1,6 +1,6 @@
 {
   "name": "@won-storage/core",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Framework-agnostic storage management core library",
   "author": "wondonghwi",
   "license": "MIT",
