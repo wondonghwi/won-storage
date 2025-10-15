@@ -1,5 +1,13 @@
 # @won-storage/react
 
+## 1.0.2
+
+### Patch Changes
+
+- 1.0.2
+- Updated dependencies
+  - @won-storage/core@1.0.2
+
 ## 1.0.1
 
 ### Patch Changes
