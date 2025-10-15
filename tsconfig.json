@@ -1,32 +1,15 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
     "types": ["vite/client"],
-    "skipLibCheck": true,
-
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    /* Path mapping */
+    /* Path mapping for monorepo */
     "baseUrl": ".",
     "paths": {
-      "won-storage": ["./src/index.ts"]
+      "@won-storage/core": ["./packages/core/src/index.ts"],
+      "won-storage": ["./packages/react/src/index.ts"]
     }
   },
-  "include": ["src", "examples"]
+  "include": ["packages/*/src", "examples"]
 }
