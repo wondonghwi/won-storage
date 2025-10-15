@@ -13,10 +13,10 @@ export default defineConfig(({ command, mode }) => {
         port: 5173,
       },
       resolve: {
-        alias: {
-          '@won-storage/core': resolve(__dirname, '../core/src/index.ts'),
-          'won-storage': resolve(__dirname, './src/index.ts'),
-        },
+        alias: [
+          { find: '@won-storage/core', replacement: resolve(__dirname, '../core/src/index.ts') },
+          { find: 'won-storage', replacement: resolve(__dirname, './src/index.ts') },
+        ],
       },
     };
   }
@@ -32,6 +32,19 @@ export default defineConfig(({ command, mode }) => {
         tsconfigPath: './tsconfig.json',
       }),
     ],
+    // Vitest에서 @won-storage/core를 로컬 소스에 매핑하여 빌드 산출물 없이도 테스트 가능하도록 처리
+    ...(mode === 'test'
+      ? {
+          resolve: {
+            alias: [
+              {
+                find: '@won-storage/core',
+                replacement: resolve(__dirname, '../core/src/index.ts'),
+              },
+            ],
+          },
+        }
+      : {}),
     build: {
       lib: {
         entry: resolve(__dirname, 'src/index.ts'),
