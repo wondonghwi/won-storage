@@ -1,6 +1,6 @@
 {
   "name": "won-storage-monorepo",
-  "version": "0.3.0",
+  "version": "0.0.0",
   "description": "Storage management library with framework-agnostic core and React bindings",
   "author": "wondonghwi",
   "license": "MIT",
