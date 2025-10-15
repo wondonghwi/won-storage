@@ -32,7 +32,8 @@ jobs:
       - name: Prepare release version
         id: version
         run: |
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          PACKAGE_PATH="./packages/react/package.json"
+          CURRENT_VERSION=$(node -p "require('$PACKAGE_PATH').version")
           PUBLISHED_VERSION=$(npm view won-storage version 2>/dev/null || echo "0.0.0")
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "published=$PUBLISHED_VERSION" >> $GITHUB_OUTPUT
