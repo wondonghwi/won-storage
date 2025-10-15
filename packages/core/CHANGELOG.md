@@ -1,5 +1,11 @@
 # @won-storage/core
 
+## 1.0.1
+
+### Patch Changes
+
+- 1.0.1 readme update
+
 ## 1.0.0
 
 ### Major Changes
