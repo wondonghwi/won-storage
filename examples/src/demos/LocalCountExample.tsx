@@ -1,4 +1,4 @@
-import { useStorage } from 'won-storage'
+import { useStorage } from '@won-storage/react'
 
 export default function LocalCountExample() {
   const [count, setCount] = useStorage('demo-count', 0)

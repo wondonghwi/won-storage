@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 프로젝트 개요
 
-`won-storage`는 프레임워크 독립적인 스토리지 관리 라이브러리입니다. Monorepo 구조로 Core 패키지는 vanilla JavaScript로 동작하며, React 패키지는 React 18+의 `useSyncExternalStore` API를 활용합니다. TypeScript로 작성되었으며 ESM과 CommonJS 번들을 모두 제공하여 다양한 빌드 도구와 호환됩니다.
+`won-storage`는 프레임워크 독립적인 스토리지 관리 라이브러리입니다. Monorepo 구조로 Core 패키지는 vanilla JavaScript로 동작하며, React 패키지(`@won-storage/react`)는 React 18+의 `useSyncExternalStore` API를 활용합니다. TypeScript로 작성되었으며 ESM과 CommonJS 번들을 모두 제공하여 다양한 빌드 도구와 호환됩니다.
 
 ## 프로젝트 구조 (Monorepo)
 
@@ -23,7 +23,7 @@ won-storage/
 │   │   ├── tsconfig.json
 │   │   └── vite.config.ts
 │   │
-│   └── react/                   # won-storage (React 바인딩)
+│   └── react/                   # @won-storage/react (React 바인딩)
 │       ├── src/
 │       │   ├── hooks/
 │       │   │   ├── useStorage.ts
@@ -51,7 +51,7 @@ won-storage/
 
 **중요**:
 - `packages/core`는 React 의존성 없이 독립적으로 동작합니다
-- `packages/react`는 `@won-storage/core`를 의존성으로 사용합니다 (workspace:*)
+- `packages/react`는 `@won-storage/core`를 의존성으로 사용하며, 배포 시 패키지 이름은 `@won-storage/react`입니다 (workspace:*)
 - `examples/` 폴더는 개발 중 예제를 테스트하기 위한 용도이며, npm 배포에서 제외됩니다
 
 ## 개발 명령어
@@ -113,7 +113,7 @@ pnpm test:watch
 - **External Dependencies**: 없음 (완전히 독립적)
 - **Type Generation**: `vite-plugin-dts`가 타입 정의 생성
 
-#### React 패키지 (`won-storage`)
+#### React 패키지 (`@won-storage/react`)
 - **설정 파일**: `packages/react/vite.config.ts` (command에 따라 빌드/개발 서버 분기)
   - `vite` → 개발 서버 (../../examples 폴더를 root로 사용)
   - `vite build` → 라이브러리 빌드
@@ -204,7 +204,7 @@ pre-commit 훅이 설정되어 있습니다. 커밋 전에 자동으로 코드 �
 - ✅ `getStorage`: Storage 객체 가져오기
 - ✅ `defaultSerializer/defaultDeserializer`: 직렬화/역직렬화
 
-### React 패키지 (`won-storage`)
+### React 패키지 (`@won-storage/react`)
 - ✅ `useStorage`: 메인 훅 (값 읽기 + 쓰기)
 - ✅ `useStorageValue`: 값만 읽기
 - ✅ `useSetStorage`: Setter만 사용

@@ -8,7 +8,7 @@
     "baseUrl": ".",
     "paths": {
       "@won-storage/core": ["./packages/core/src/index.ts"],
-      "won-storage": ["./packages/react/src/index.ts"]
+      "@won-storage/react": ["./packages/react/src/index.ts"]
     }
   },
   "include": ["packages/*/src", "examples"]

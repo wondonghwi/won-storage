@@ -15,7 +15,7 @@ export default defineConfig(({ command, mode }) => {
       resolve: {
         alias: [
           { find: '@won-storage/core', replacement: resolve(__dirname, '../core/src/index.ts') },
-          { find: 'won-storage', replacement: resolve(__dirname, './src/index.ts') },
+          { find: '@won-storage/react', replacement: resolve(__dirname, './src/index.ts') },
         ],
       },
     };
@@ -32,7 +32,7 @@ export default defineConfig(({ command, mode }) => {
         tsconfigPath: './tsconfig.json',
       }),
     ],
-    // Vitest에서 @won-storage/core를 로컬 소스에 매핑하여 빌드 산출물 없이도 테스트 가능하도록 처리
+    // Vitest에서 @won-storage/core, @won-storage/react를 로컬 소스에 매핑하여 dist 없이 테스트 가능하도록 처리
     ...(mode === 'test'
       ? {
           resolve: {
@@ -40,6 +40,10 @@ export default defineConfig(({ command, mode }) => {
               {
                 find: '@won-storage/core',
                 replacement: resolve(__dirname, '../core/src/index.ts'),
+              },
+              {
+                find: '@won-storage/react',
+                replacement: resolve(__dirname, './src/index.ts'),
               },
             ],
           },

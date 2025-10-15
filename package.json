@@ -7,10 +7,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --filter won-storage dev",
-    "build": "pnpm --filter @won-storage/core build && pnpm --filter won-storage build",
+    "dev": "pnpm --filter @won-storage/react dev",
+    "build": "pnpm --filter @won-storage/core build && pnpm --filter @won-storage/react build",
     "build:core": "pnpm --filter @won-storage/core build",
-    "build:react": "pnpm --filter won-storage build",
+    "build:react": "pnpm --filter @won-storage/react build",
     "lint": "pnpm --recursive run lint",
     "prepare": "husky",
     "format": "prettier \"**/*.{ts,tsx,js,jsx,json,css,md}\" --write",

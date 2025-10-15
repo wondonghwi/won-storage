@@ -1,4 +1,4 @@
-import { useStorageValue, useSetStorage, useRemoveStorage } from 'won-storage';
+import { useStorageValue, useSetStorage, useRemoveStorage } from '@won-storage/react';
 
 export default function ThemeExample() {
   const theme = useStorageValue('demo-theme', '');

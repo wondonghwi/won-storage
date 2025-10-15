@@ -4,7 +4,7 @@
   "commit": false,
   "fixed": [],
   "linked": [
-    ["@won-storage/core", "won-storage"]
+    ["@won-storage/core", "@won-storage/react"]
   ],
   "access": "public",
   "baseBranch": "main",
