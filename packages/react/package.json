@@ -1,6 +1,6 @@
 {
   "name": "@won-storage/react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "React hooks library for storage management using useSyncExternalStore",
   "author": "wondonghwi",
   "license": "MIT",
