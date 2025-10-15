@@ -1,4 +1,4 @@
-import { useStorage, useRemoveStorage } from 'won-storage'
+import { useStorage, useRemoveStorage } from '@won-storage/react'
 
 export default function SessionNoteExample() {
   const [note, setNote] = useStorage('demo-session-note', '', { storageType: 'session' })

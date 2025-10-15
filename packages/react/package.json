@@ -1,5 +1,5 @@
 {
-  "name": "won-storage",
+  "name": "@won-storage/react",
   "version": "0.3.1",
   "description": "React hooks library for storage management using useSyncExternalStore",
   "author": "wondonghwi",

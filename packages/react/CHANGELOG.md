@@ -1,4 +1,4 @@
-# won-storage
+# @won-storage/react
 
 ## 0.3.1
 
