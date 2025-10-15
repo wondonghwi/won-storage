@@ -1,6 +1,6 @@
 {
   "name": "@won-storage/core",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Framework-agnostic storage management core library",
   "author": "wondonghwi",
   "license": "MIT",
@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/wondonghwi/won-storage/issues"
   },
-  "homepage": "https://github.com/wondonghwi/won-storage#readme",
+  "homepage": "https://github.com/wondonghwi/won-storage/tree/main/packages/core#readme",
   "type": "module",
   "private": false,
   "main": "./dist/index.cjs",
