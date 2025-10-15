@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/wondonghwi/won-storage/issues"
   },
-  "homepage": "https://github.com/wondonghwi/won-storage#readme",
+  "homepage": "https://github.com/wondonghwi/won-storage/tree/main/packages/react#readme",
   "type": "module",
   "private": false,
   "main": "./dist/index.cjs",
